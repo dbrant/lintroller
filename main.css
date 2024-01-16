@@ -1,0 +1,83 @@
+﻿
+body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    background: #fff;
+    color: #333;
+}
+
+a {
+    color: #222;
+}
+
+h1 {
+    font-family: 'Merriweather',sans-serif;
+    font-size: 300%;
+    color: #444;
+    background: #eee;
+    padding: 16px 0 16px 0;
+    margin: 0;
+}
+
+.content {
+    margin: 16px;
+}
+
+.interface {
+    margin-top: 16px;
+}
+
+.title {
+    font-size: 150%;
+    font-weight: bold;
+    margin: 16px 0;
+}
+
+.lintType {
+    text-align: center;
+    background: #fc6;
+    border-radius: 8px;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.editLink {
+    margin-left: 16px;
+    font-weight: normal;
+}
+
+.wikitext {
+    font-family: monospace;
+    font-size: 100%;
+    line-height: 1.5;
+}
+
+.highlight {
+    background: #fd8;
+    font-weight: bold;
+    color: #000;
+}
+
+.footer {
+    padding: 16px;
+    font-size: 75%;
+}
+
+.centered {
+    text-align: center;
+}
+
+.topcontainer {
+    margin: 16px;
+    padding: 8px;
+    background: #eee;
+    border-radius: 8px;
+}
+
+.status {
+    font-weight: bold;
+    background: rgba(255, 255, 128, 0.4);
+    border-radius: 4px;
+    margin: 16px;
+    padding: 16px;
+}

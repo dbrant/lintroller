@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Lint Roller</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="main.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://tools-static.wmflabs.org/fontcdn/css?family=Merriweather:400,400italic,700,700italic&amp;subset=latin" rel="stylesheet" type="text/css">
+    <link href="https://tools-static.wmflabs.org/fontcdn/css?family=Lato:400,400italic,700,700italic&amp;subset=latin" rel="stylesheet" type="text/css">
+    <script>
+
+        if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
+            onDocumentReady();
+        } else {
+            document.addEventListener("DOMContentLoaded", onDocumentReady);
+        }
+        function onDocumentReady() {
+            interfaceButtons = document.getElementById("interfaceButtons")
+            fillQueue()
+        }
+
+
+        let lintErrorQueue = []
+        let lintErrorContinueFrom = 0
+        let interfaceButtons
+
+
+        function fillQueue() {
+            setStatus("Loading...")
+            interfaceButtons.style.display = "none"
+
+            let req = new XMLHttpRequest()
+            req.onreadystatechange = function() {
+                if (this.readyState === 4 && (this.status === 200 || this.status === 0)) {
+                    setStatus()
+                    console.log("Received response.")
+                    let response = JSON.parse(req.responseText)
+                    let linterrors = response.query.linterrors
+                    lintErrorContinueFrom = response.continue.lntfrom
+                    console.log(lintErrorContinueFrom)
+
+                    // add all to queue
+                    for (let i = 0; i < linterrors.length; i++) {
+                        lintErrorQueue.push(linterrors[i])
+                    }
+
+                    loadNextFromQueue()
+                }
+            };
+            req.open("GET", "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&formatversion=2&list=linterrors&formatversion=2&lntcategories=missing-end-tag&lntnamespace=0&lntfrom=" + lintErrorContinueFrom, true);
+            req.send();
+        }
+
+        function loadNextFromQueue() {
+            if (lintErrorQueue.length > 0) {
+                let lintObj = lintErrorQueue.shift()
+                loadPage(lintObj)
+                interfaceButtons.style.display = "block"
+            } else {
+                fillQueue()
+            }
+        }
+
+        function loadPage(lintObj) {
+            setStatus("Loading page...")
+            let req = new XMLHttpRequest()
+            req.onreadystatechange = function() {
+                if (this.readyState === 4 && (this.status === 200 || this.status === 0)) {
+                    setStatus()
+                    console.log("Received response.")
+                    let query = JSON.parse(req.responseText).query
+                    let page = query.pages[0]
+                    let title = page.title
+                    let content = page.revisions[0].slots.main.content
+
+                    let resultsContainer = document.getElementById("resultsContainer")
+                    clearAllChildren(resultsContainer)
+
+                    let lintTypeDiv = document.createElement("div")
+                    lintTypeDiv.className = "lintType"
+                    lintTypeDiv.innerHTML = lintObj.category + ": " + lintObj.params.name
+                    resultsContainer.appendChild(lintTypeDiv)
+
+                    let titleDiv = document.createElement("div")
+                    titleDiv.className = "title"
+                    titleDiv.innerHTML = title
+                    resultsContainer.appendChild(titleDiv)
+
+                    let editLink = document.createElement("a")
+                    editLink.href = "https://en.wikipedia.org/w/index.php?title=" + title + "&action=edit"
+                    editLink.target = "_blank"
+                    editLink.className = "editLink"
+                    editLink.innerHTML = "(Edit ↗)"
+                    titleDiv.appendChild(editLink)
+
+
+                    let highlightedContent = highlightSubstring(content, lintObj.location[0], lintObj.location[1])
+
+
+                    let contentDiv = document.createElement("div")
+                    contentDiv.className = "wikitext"
+                    contentDiv.innerHTML = highlightedContent
+                    resultsContainer.appendChild(contentDiv)
+                }
+            };
+            req.open("GET", "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&formatversion=2&prop=revisions&rvprop=content&rvslots=main&formatversion=2&titles=" + lintObj.title, true);
+            req.send();
+        }
+
+
+        function highlightSubstring(str, start, end) {
+            if (start < 0 || end > str.length || start > end) {
+                return str;
+            }
+            let str1 = replaceChars(str.substring(0, start));
+            let str2 = replaceChars(str.substring(start, end));
+            let str3 = replaceChars(str.substring(end));
+
+            return str1 + '<span class="highlight">' + str2 + '</span>' + str3;
+        }
+
+        function replaceChars(str) {
+            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function setStatus(status) {
+            let loadingStatus = document.getElementById("loadingStatus");
+            if (status && status.length > 0) {
+                loadingStatus.style.display = "block";
+                loadingStatus.innerHTML = status;
+            } else {
+                loadingStatus.style.display = "none";
+            }
+        }
+
+        function clearAllChildren(node) {
+            while (node.firstChild) {
+                node.removeChild(node.firstChild);
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<h1 class="centered">Lint Roller</h1>
+
+<div class="status centered" id="loadingStatus">
+</div>
+
+<div class="interface centered" id="interfaceButtons">
+    <button onclick="loadNextFromQueue()">Next →</a>
+</div>
+
+<div id="resultsContainer" class="content">
+</div>
+
+<div class="footer centered" style="margin-top: 200px;">
+    <a href="https://dmitrybrant.com">Dmitry Brant</a>, 2024.
+</div>
+
+</body>
+</html>
