@@ -23,7 +23,12 @@
 
 
         let lintErrorQueue = []
-        let lintErrorContinueFrom = 0
+        
+        // This is a reasonable minimum lint ID from which meaningful results seem to begin.
+        // If we start from 0, the API takes a very long time to return the first batch of results,
+        // and they start from around 202600000 anyway.
+        let lintErrorContinueFrom = 202600000
+
         let interfaceButtons
 
 
@@ -147,18 +152,18 @@
 
 <h1 class="centered">Lint Roller</h1>
 
-<div class="status centered" id="loadingStatus">
-</div>
-
 <div class="interface centered" id="interfaceButtons">
     <button onclick="loadNextFromQueue()">Next →</a>
+</div>
+
+<div class="status centered" id="loadingStatus">
 </div>
 
 <div id="resultsContainer" class="content">
 </div>
 
 <div class="footer centered" style="margin-top: 200px;">
-    <a href="https://dmitrybrant.com">Dmitry Brant</a>, 2024.
+    <a href="https://en.wikipedia.org/wiki/User:Dmitry_Brant">Dmitry Brant</a>, 2024.
 </div>
 
 </body>
