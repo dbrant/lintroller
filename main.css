@@ -4,6 +4,11 @@ body {
     font-family: 'Lato', sans-serif;
     background: #fff;
     color: #333;
+
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/4/4e/Linter_logo_v2.svg);
+    background-size: 128px;
+    background-repeat: no-repeat;
+    background-position-x: 16px;
 }
 
 a {
