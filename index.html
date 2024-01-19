@@ -29,6 +29,8 @@
         // and they start from around 202600000 anyway.
         let lintErrorContinueFrom = 202600000
 
+        let lintErrorTypes = "missing-end-tag|misnested-tag|wikilink-in-extlink|bogus-image-options"
+
         let interfaceButtons
 
 
@@ -54,7 +56,7 @@
                     loadNextFromQueue()
                 }
             };
-            req.open("GET", "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&formatversion=2&list=linterrors&formatversion=2&lntcategories=missing-end-tag&lntnamespace=0&lntfrom=" + lintErrorContinueFrom, true);
+            req.open("GET", "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&formatversion=2&list=linterrors&formatversion=2&lntcategories=" + lintErrorTypes + "&lntnamespace=0&lntfrom=" + lintErrorContinueFrom, true);
             req.send();
         }
 
@@ -85,7 +87,13 @@
 
                     let lintTypeDiv = document.createElement("div")
                     lintTypeDiv.className = "lintType"
-                    lintTypeDiv.innerHTML = lintObj.category + ": " + lintObj.params.name
+                    let lintType = lintObj.category
+                    if (lintObj.params && lintObj.params.name) {
+                        lintType += ": " + lintObj.params.name
+                    } else if (lintObj.params && lintObj.params.items) {
+                        lintType += ": " + lintObj.params.items[0]
+                    }
+                    lintTypeDiv.innerHTML = lintType
                     resultsContainer.appendChild(lintTypeDiv)
 
                     let titleDiv = document.createElement("div")
@@ -157,7 +165,7 @@
 <h1 class="centered">Lint Roller</h1>
 
 <div class="interface centered" id="interfaceButtons">
-    <button onclick="loadNextFromQueue()">Next →</a>
+    <button onclick="loadNextFromQueue()" style="font-size: 140%;">Next →</a>
 </div>
 
 <div class="status centered" id="loadingStatus">
