@@ -101,7 +101,7 @@
                     titleDiv.appendChild(editLink)
 
 
-                    let highlightedContent = highlightSubstring(content, lintObj.location[0], lintObj.location[1])
+                    let highlightedContent = replaceNewlines(highlightSubstring(content, lintObj.location[0], lintObj.location[1]))
 
 
                     let contentDiv = document.createElement("div")
@@ -128,6 +128,10 @@
 
         function replaceChars(str) {
             return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function replaceNewlines(str) {
+            return str.replace(/\n/g, "<br />");
         }
 
         function setStatus(status) {
