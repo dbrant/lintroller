@@ -8,7 +8,7 @@ body {
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/4/4e/Linter_logo_v2.svg);
     background-size: 128px;
     background-repeat: no-repeat;
-    background-position-x: 16px;
+    background-position-x: 32px;
 }
 
 a {
@@ -19,7 +19,6 @@ h1 {
     font-family: 'Merriweather',sans-serif;
     font-size: 300%;
     color: #444;
-    background: #eee;
     padding: 16px 0 16px 0;
     margin: 0;
 }
